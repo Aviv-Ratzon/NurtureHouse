@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pinned Board</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="dot"></div>
+      <h1>Pinned Board</h1>
+    </div>
+
+    <button id="newBtn" class="btn primary" type="button">New note</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <h2>Create a note</h2>
+
+      <form id="noteForm" class="form">
+        <label>
+          Name (optional)
+          <input id="nameInput" type="text" maxlength="32" placeholder="e.g., Alex" />
+        </label>
+
+        <label>
+          Message
+          <textarea id="msgInput" maxlength="500" placeholder="Write something..." required></textarea>
+        </label>
+
+        <div class="row">
+          <label class="small">
+            Paper color
+            <select id="colorInput">
+              <option value="lemon">Lemon</option>
+              <option value="mint">Mint</option>
+              <option value="sky">Sky</option>
+              <option value="rose">Rose</option>
+              <option value="lavender">Lavender</option>
+            </select>
+          </label>
+
+          <label class="small">
+            Rotation
+            <select id="tiltInput">
+              <option value="auto" selected>Auto</option>
+              <option value="-6">-6°</option>
+              <option value="-3">-3°</option>
+              <option value="0">0°</option>
+              <option value="3">3°</option>
+              <option value="6">6°</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Pin note</button>
+          <button id="clearBtn" class="btn danger" type="button">Clear my notes</button>
+        </div>
+
+        <p class="hint">
+          GitHub Pages demo mode: notes are saved in <strong>your browser only</strong>.
+        </p>
+      </form>
+    </section>
+
+    <section class="boardWrap">
+      <div class="boardHeader">
+        <h2>Board</h2>
+        <div class="tools">
+          <input id="searchInput" class="search" type="search" placeholder="Search notes..." />
+          <button id="shuffleBtn" class="btn" type="button">Shuffle</button>
+        </div>
+      </div>
+
+      <div id="board" class="board" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <template id="noteTemplate">
+    <article class="note" tabindex="0">
+      <div class="pin" aria-hidden="true"></div>
+      <header class="noteHead">
+        <div class="meta">
+          <span class="author"></span>
+          <span class="date"></span>
+        </div>
+        <button class="iconBtn delete" title="Delete note" aria-label="Delete note" type="button">✕</button>
+      </header>
+      <p class="text"></p>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
