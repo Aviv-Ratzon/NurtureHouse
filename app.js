@@ -36,12 +36,6 @@ const shuffleBtn = document.getElementById("shuffleBtn");
 const searchInput = document.getElementById("searchInput");
 const newBtn = document.getElementById("newBtn");
 
-// Required elements for the app to work (if any are missing, bail early instead of crashing)
-if (!board || !tpl || !form || !msgInput || !colorInput || !tiltInput || !searchInput || !newBtn) {
-  console.error("Pinned Board: Missing required DOM elements. Check index.html ids.");
-  throw new Error("Pinned Board: missing required DOM elements");
-}
-
 // local UI-only state (positions are per viewer; messages are shared)
 let notesCache = []; // from Firestore
 const posCache = new Map(); // noteId -> {x,y,tilt} stored locally
@@ -236,32 +230,27 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// Optional controls (may be removed/commented out in HTML)
-if (clearBtn) {
-  clearBtn.addEventListener("click", () => {
-    // With shared notes, "clear all" would delete everyone’s notes, which is not OK by default.
-    // So we make this just clear *your local positions*.
-    posCache.clear();
-    localStorage.removeItem(POS_KEY);
-    render();
-  });
-}
+clearBtn.addEventListener("click", () => {
+  // With shared notes, "clear all" would delete everyone’s notes, which is not OK by default.
+  // So we make this just clear *your local positions*.
+  posCache.clear();
+  localStorage.removeItem(POS_KEY);
+  render();
+});
 
-if (shuffleBtn) {
-  shuffleBtn.addEventListener("click", () => {
-    // shuffle is viewer-only; doesn't change shared data
-    for (const n of notesCache) {
-      const pos = createPosition();
-      const view = getViewProps(n.id);
-      view.x = pos.x;
-      view.y = pos.y;
-      view.tilt = (view.tilt ?? 0) + rand(-2, 2);
-      posCache.set(n.id, view);
-    }
-    savePositions();
-    render();
-  });
-}
+shuffleBtn.addEventListener("click", () => {
+  // shuffle is viewer-only; doesn't change shared data
+  for (const n of notesCache) {
+    const pos = createPosition();
+    const view = getViewProps(n.id);
+    view.x = pos.x;
+    view.y = pos.y;
+    view.tilt = (view.tilt ?? 0) + rand(-2, 2);
+    posCache.set(n.id, view);
+  }
+  savePositions();
+  render();
+});
 
 searchInput.addEventListener("input", render);
 newBtn.addEventListener("click", () => msgInput.focus());

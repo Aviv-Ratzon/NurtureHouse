@@ -84,8 +84,7 @@ body{
 .layout{
   display:grid;
   /* Use the full screen width; keep the creation panel from getting too wide */
-  grid-template-columns: 1fr minmax(320px, 420px);
-  grid-template-areas: "board panel";
+  grid-template-columns: minmax(320px, 420px) 1fr;
   gap:18px;
   padding:18px;
   max-width: none;
@@ -96,12 +95,7 @@ body{
 }
 
 @media (max-width: 980px){
-  .layout{
-    grid-template-columns:1fr;
-    grid-template-areas:
-      "panel"
-      "board";
-  }
+  .layout{grid-template-columns:1fr}
 }
 
 .panel{
@@ -111,7 +105,6 @@ body{
   padding:16px;
   box-shadow: var(--shadow);
   width: 100%;
-  grid-area: panel; /* put the creation panel on the right */
 }
 
 .panel h2{margin:4px 0 12px; font-size:16px; color:var(--text)}
@@ -162,7 +155,6 @@ textarea{min-height:120px; resize:vertical}
   display:flex; flex-direction:column; gap:10px;
   min-width: 0; /* allow the board column to grow without overflow */
   min-height: 0;
-  grid-area: board; /* put the board on the left */
 }
 
 .boardHeader{
