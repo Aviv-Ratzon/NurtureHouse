@@ -190,6 +190,28 @@ textarea{min-height:120px; resize:vertical}
   background: rgba(255,255,255,.06);
 }
 
+.board{
+  /* Back-compat: if a client has cached old HTML that still uses <div id="board" class="board"> */
+  position:relative;
+  flex: 1;
+  min-height: 0;
+  border-radius:18px;
+  padding:22px;
+  overflow:auto; /* old version was hidden; on phones we want scroll */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  /* wood frame + cork center (old layout had no inner canvas) */
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.35), transparent 20%, transparent 80%, rgba(0,0,0,.35)),
+    linear-gradient(180deg, rgba(255,255,255,.10), transparent 18%, transparent 82%, rgba(0,0,0,.15)),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 10px, rgba(0,0,0,.02) 10px 20px),
+    radial-gradient(1400px 900px at 20% 15%, var(--cork) 0%, var(--cork2) 65%, #8f5d33 100%);
+  border: 14px solid transparent;
+  border-image: linear-gradient(180deg, var(--boardWood1), var(--boardWood2)) 1;
+  box-shadow: var(--shadow);
+}
+
 .boardCanvas{
   position:relative;
   width: 1400px;

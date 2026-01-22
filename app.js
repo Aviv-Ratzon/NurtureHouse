@@ -24,8 +24,11 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // --- UI elements ---
-const boardViewport = document.getElementById("boardViewport");
-const board = document.getElementById("boardCanvas");
+// Support both layouts:
+// - New:  #boardViewport (scroll container) -> #boardCanvas (notes live here)
+// - Old:  #board (notes live here, was also the "board" surface)
+const board = document.getElementById("boardCanvas") || document.getElementById("board");
+const boardViewport = document.getElementById("boardViewport") || board;
 const tpl = document.getElementById("noteTemplate");
 const form = document.getElementById("noteForm");
 const nameInput = document.getElementById("nameInput");
@@ -61,6 +64,7 @@ function scheduleCanvasResize() {
 }
 
 function resizeCanvasToFitNotes() {
+  if (!board) return;
   const viewportW = boardViewport?.clientWidth ?? 0;
   const viewportH = boardViewport?.clientHeight ?? 0;
 
@@ -100,12 +104,12 @@ function savePositions() {
 }
 
 function boardRect() {
-  return boardViewport.getBoundingClientRect();
+  return (boardViewport || board).getBoundingClientRect();
 }
 function createPosition() {
   const rect = boardRect(); // viewport rect
-  const viewLeft = boardViewport.scrollLeft;
-  const viewTop = boardViewport.scrollTop;
+  const viewLeft = boardViewport?.scrollLeft ?? 0;
+  const viewTop = boardViewport?.scrollTop ?? 0;
   const pad = 28;
   const w = 240;
   const h = 170;
@@ -142,6 +146,7 @@ function getViewProps(noteId) {
 }
 
 function render() {
+  if (!board) return;
   board.innerHTML = "";
   const q = searchInput.value.trim().toLowerCase();
 
@@ -198,8 +203,8 @@ function makeDraggable(el, id) {
   const onPointerMove = (e) => {
     if (!dragging) return;
 
-    const canvasW = board.offsetWidth;
-    const canvasH = board.offsetHeight;
+    const canvasW = board?.offsetWidth ?? 0;
+    const canvasH = board?.offsetHeight ?? 0;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
 
