@@ -24,11 +24,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // --- UI elements ---
-// Support both layouts:
-// - New:  #boardViewport (scroll container) -> #boardCanvas (notes live here)
-// - Old:  #board (notes live here, was also the "board" surface)
-const board = document.getElementById("boardCanvas") || document.getElementById("board");
-const boardViewport = document.getElementById("boardViewport") || board;
+const board = document.getElementById("board");
 const tpl = document.getElementById("noteTemplate");
 const form = document.getElementById("noteForm");
 const nameInput = document.getElementById("nameInput");
@@ -49,45 +45,6 @@ const POS_KEY = "pinned_board_positions_v1";
 const rand = (min, max) => Math.random() * (max - min) + min;
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
-// --- board sizing (viewer-only) ---
-const BASE_CANVAS_W = 1400;
-const BASE_CANVAS_H = 900;
-const CANVAS_GROW_PAD = 120;
-let resizeRaf = 0;
-
-function scheduleCanvasResize() {
-  if (resizeRaf) return;
-  resizeRaf = requestAnimationFrame(() => {
-    resizeRaf = 0;
-    resizeCanvasToFitNotes();
-  });
-}
-
-function resizeCanvasToFitNotes() {
-  if (!board) return;
-  const viewportW = boardViewport?.clientWidth ?? 0;
-  const viewportH = boardViewport?.clientHeight ?? 0;
-
-  let maxRight = 0;
-  let maxBottom = 0;
-  const els = board.querySelectorAll(".note");
-  for (const el of els) {
-    const right = el.offsetLeft + el.offsetWidth;
-    const bottom = el.offsetTop + el.offsetHeight;
-    if (right > maxRight) maxRight = right;
-    if (bottom > maxBottom) maxBottom = bottom;
-  }
-
-  const nextW = Math.max(BASE_CANVAS_W, viewportW, Math.ceil(maxRight + CANVAS_GROW_PAD));
-  const nextH = Math.max(BASE_CANVAS_H, viewportH, Math.ceil(maxBottom + CANVAS_GROW_PAD));
-
-  // Only write styles if changed (avoid layout churn)
-  const curW = board.offsetWidth;
-  const curH = board.offsetHeight;
-  if (Math.abs(curW - nextW) > 1) board.style.width = `${nextW}px`;
-  if (Math.abs(curH - nextH) > 1) board.style.height = `${nextH}px`;
-}
-
 function loadPositions() {
   try {
     const raw = localStorage.getItem(POS_KEY);
@@ -104,17 +61,15 @@ function savePositions() {
 }
 
 function boardRect() {
-  return (boardViewport || board).getBoundingClientRect();
+  return board.getBoundingClientRect();
 }
 function createPosition() {
-  const rect = boardRect(); // viewport rect
-  const viewLeft = boardViewport?.scrollLeft ?? 0;
-  const viewTop = boardViewport?.scrollTop ?? 0;
+  const rect = boardRect();
   const pad = 28;
   const w = 240;
   const h = 170;
-  const x = rand(viewLeft + pad, viewLeft + Math.max(pad, rect.width - w - pad));
-  const y = rand(viewTop + pad, viewTop + Math.max(pad, rect.height - h - pad));
+  const x = rand(pad, Math.max(pad, rect.width - w - pad));
+  const y = rand(pad, Math.max(pad, rect.height - h - pad));
   return { x, y };
 }
 function autoTilt() {
@@ -146,7 +101,6 @@ function getViewProps(noteId) {
 }
 
 function render() {
-  if (!board) return;
   board.innerHTML = "";
   const q = searchInput.value.trim().toLowerCase();
 
@@ -177,9 +131,6 @@ function render() {
     makeDraggable(node, note.id);
     board.appendChild(node);
   }
-
-  // After DOM is in place, ensure the canvas is big enough (esp. on mobile).
-  scheduleCanvasResize();
 }
 
 function makeDraggable(el, id) {
@@ -203,8 +154,7 @@ function makeDraggable(el, id) {
   const onPointerMove = (e) => {
     if (!dragging) return;
 
-    const canvasW = board?.offsetWidth ?? 0;
-    const canvasH = board?.offsetHeight ?? 0;
+    const rect = boardRect();
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
 
@@ -213,17 +163,14 @@ function makeDraggable(el, id) {
     const pad = 10;
 
     const view = getViewProps(id);
-    view.x = clamp(originX + dx, pad, canvasW - w - pad);
-    view.y = clamp(originY + dy, pad, canvasH - h - pad);
+    view.x = clamp(originX + dx, pad, rect.width - w - pad);
+    view.y = clamp(originY + dy, pad, rect.height - h - pad);
 
     posCache.set(id, view);
     savePositions();
 
     el.style.left = `${view.x}px`;
     el.style.top = `${view.y}px`;
-
-    // If you drag notes toward the edges, expand the canvas to keep everything reachable.
-    scheduleCanvasResize();
   };
 
   const onPointerUp = () => { dragging = false; };
@@ -307,10 +254,7 @@ shuffleBtn.addEventListener("click", () => {
 
 searchInput.addEventListener("input", render);
 newBtn.addEventListener("click", () => msgInput.focus());
-window.addEventListener("resize", () => {
-  render();
-  scheduleCanvasResize();
-});
+window.addEventListener("resize", render);
 
 // --- boot ---
 loadPositions();

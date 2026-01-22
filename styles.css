@@ -95,11 +95,7 @@ body{
 }
 
 @media (max-width: 980px){
-  .layout{
-    grid-template-columns:1fr;
-    grid-template-rows:auto 1fr;
-  }
-  .boardWrap{min-height: 60vh}
+  .layout{grid-template-columns:1fr}
 }
 
 .panel{
@@ -173,35 +169,15 @@ textarea{min-height:120px; resize:vertical}
   border-radius:999px;
 }
 
-.boardViewport{
-  position:relative;
-  flex: 1;
-  min-height: 0;
-  border-radius:18px;
-  padding:22px;
-  overflow:auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-
-  /* wood frame */
-  border: 14px solid transparent;
-  border-image: linear-gradient(180deg, var(--boardWood1), var(--boardWood2)) 1;
-  box-shadow: var(--shadow);
-  background: rgba(255,255,255,.06);
-}
-
 .board{
-  /* Back-compat: if a client has cached old HTML that still uses <div id="board" class="board"> */
   position:relative;
   flex: 1;
   min-height: 0;
   border-radius:18px;
   padding:22px;
-  overflow:auto; /* old version was hidden; on phones we want scroll */
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overflow:hidden;
 
-  /* wood frame + cork center (old layout had no inner canvas) */
+  /* wood frame + cork center */
   background:
     linear-gradient(90deg, rgba(0,0,0,.35), transparent 20%, transparent 80%, rgba(0,0,0,.35)),
     linear-gradient(180deg, rgba(255,255,255,.10), transparent 18%, transparent 82%, rgba(0,0,0,.15)),
@@ -210,20 +186,6 @@ textarea{min-height:120px; resize:vertical}
   border: 14px solid transparent;
   border-image: linear-gradient(180deg, var(--boardWood1), var(--boardWood2)) 1;
   box-shadow: var(--shadow);
-}
-
-.boardCanvas{
-  position:relative;
-  width: 1400px;
-  height: 900px;
-  border-radius:12px;
-
-  /* cork surface */
-  background:
-    linear-gradient(90deg, rgba(0,0,0,.35), transparent 20%, transparent 80%, rgba(0,0,0,.35)),
-    linear-gradient(180deg, rgba(255,255,255,.10), transparent 18%, transparent 82%, rgba(0,0,0,.15)),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 10px, rgba(0,0,0,.02) 10px 20px),
-    radial-gradient(1400px 900px at 20% 15%, var(--cork) 0%, var(--cork2) 65%, #8f5d33 100%);
 }
 
 /* Paper notes */
@@ -236,7 +198,6 @@ textarea{min-height:120px; resize:vertical}
   border: 1px solid rgba(0,0,0,.10);
   transform-origin: 20px 18px;
   user-select:none;
-  touch-action:none; /* prevent scrolling while dragging notes on mobile */
 }
 
 .note:focus{outline: 3px solid rgba(94,198,255,.55)}
