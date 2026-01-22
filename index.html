@@ -18,17 +18,17 @@
 
   <main class="layout">
     <section class="panel">
-      <h2 dir="rtl">יצירת הודעה</h2>
+      <h2>Create a note</h2>
 
       <form id="noteForm" class="form">
-        <label dir="rtl">
-          שם
-          <input id="nameInput" type="text" maxlength="32"  dir="rtl" />
+        <label>
+          Name (optional)
+          <input id="nameInput" type="text" maxlength="32" placeholder="e.g., Alex" />
         </label>
 
-        <label dir="rtl">
-          הודעה
-          <textarea id="msgInput" maxlength="500"  dir="rtl" placeholder="..." required></textarea>
+        <label>
+          Message
+          <textarea id="msgInput" maxlength="500" placeholder="Write something..." required></textarea>
         </label>
 
         <div class="row">
@@ -57,8 +57,8 @@
         </div>
 
         <div class="actions">
-          <button class="btn primary"  dir="rtl" type="submit">פרסם</button>
-          <!-- <button id="clearBtn" class="btn danger" type="button">Clear my notes</button> -->
+          <button class="btn primary" type="submit">Pin note</button>
+          <button id="clearBtn" class="btn danger" type="button">Clear my notes</button>
         </div>
 
         <p class="hint" dir="rtl">
@@ -68,11 +68,11 @@
     </section>
 
     <section class="boardWrap">
-      <div class="boardHeader" dir="rtl">
-        <h2 dir="rtl">לוח מודעות</h2>
+      <div class="boardHeader">
+        <h2>Board</h2>
         <div class="tools">
-          <input id="searchInput" class="search" type="search"  dir="rtl" placeholder="חפש/י הודעות...." />
-          <!-- <button id="shuffleBtn" class="btn" type="button">Shuffle</button> -->
+          <input id="searchInput" class="search" type="search" placeholder="Search notes..." />
+          <button id="shuffleBtn" class="btn" type="button">Shuffle</button>
         </div>
       </div>
 
